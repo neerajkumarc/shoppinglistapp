@@ -16,7 +16,26 @@ const SignInScreen = () => {
   const [password, setPassword] = React.useState("");
   const [isSigningIn, setIsSigningIn] = React.useState(false);
 
-  const onSignInPress = async () => {};
+  const onSignInPress = async () => {
+    if (!isLoaded) return;
+    setIsSigningIn(true);
+    try {
+      const signInAttempt = await signIn.create({
+        identifier: emailAddress,
+        password,
+      });
+      if (signInAttempt.status === "complete") {
+        await setActive({ session: signInAttempt.createdSessionId });
+        router.replace("/(index)");
+      } else {
+        console.error(JSON.stringify(signInAttempt, null, 2));
+      }
+    } catch (error) {
+      console.error(JSON.stringify(error, null, 2));
+    } finally {
+      setIsSigningIn(false);
+    }
+  };
 
   if (!isLoaded) {
     return null;
