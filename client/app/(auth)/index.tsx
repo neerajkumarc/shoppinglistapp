@@ -2,7 +2,8 @@ import { ThemedText } from "@/components/ThemedText";
 import { BodyScrollView } from "@/components/ui/bodyScrollView";
 import Button from "@/components/ui/button";
 import TextInput from "@/components/ui/text-input";
-import { useSignIn } from "@clerk/clerk-expo";
+import { isClerkAPIResponseError, useSignIn } from "@clerk/clerk-expo";
+import { ClerkAPIError } from "@clerk/types";
 import { useRouter } from "expo-router";
 import React from "react";
 import { View } from "react-native";
@@ -15,7 +16,7 @@ const SignInScreen = () => {
   const [emailAddress, setEmailAddress] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [isSigningIn, setIsSigningIn] = React.useState(false);
-
+  const [errors, setErrors] = React.useState<ClerkAPIError[]>([]);
   const onSignInPress = async () => {
     if (!isLoaded) return;
     setIsSigningIn(true);
@@ -32,6 +33,9 @@ const SignInScreen = () => {
       }
     } catch (error) {
       console.error(JSON.stringify(error, null, 2));
+      if (isClerkAPIResponseError(error)) {
+        setErrors(error.errors);
+      }
     } finally {
       setIsSigningIn(false);
     }
@@ -65,6 +69,12 @@ const SignInScreen = () => {
       >
         Sign In
       </Button>
+
+      {errors.map((error) => (
+        <ThemedText key={error.longMessage} style={{ color: "red" }}>
+          {error.longMessage}
+        </ThemedText>
+      ))}
 
       <View
         style={{
