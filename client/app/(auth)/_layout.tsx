@@ -7,9 +7,8 @@ export default function AuthRoutesLayout() {
     return null;
   }
   if (isSignedIn) {
-    <Redirect href={"/(index)"} />;
-  }
-  return (
+    return <Redirect href={"/(index)"} />;
+  } else
     <Stack>
       <Stack.Screen name="index" options={{ headerTitle: "Sign In" }} />
       <Stack.Screen name="sign-up" options={{ headerTitle: "Sign Up" }} />
@@ -17,6 +16,5 @@ export default function AuthRoutesLayout() {
         name="reset-password"
         options={{ headerTitle: "Forget Password" }}
       />
-    </Stack>
-  );
+    </Stack>;
 }
